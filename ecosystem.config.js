@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "stellarseal-backend",
+      name: "paranipay-backend",
       cwd: "./backend",
       script: "uvicorn",
       args: "app.main:app --host 0.0.0.0 --port 8420",
@@ -16,7 +16,7 @@ module.exports = {
       },
     },
     {
-      name: "stellarseal-frontend",
+      name: "paranipay-frontend",
       cwd: "./frontend",
       script: "npm",
       args: "run dev -- --host 0.0.0.0",

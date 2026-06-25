@@ -1,4 +1,4 @@
-# StellarSeal
+# ParaniPay
 
 Zero-knowledge KYC compliance for Stellar anchors. Users prove they meet compliance requirements without revealing any personal data to the anchor.
 

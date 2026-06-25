@@ -58,7 +58,7 @@ def generate_proof(
         "context": str(context_field),
     }
 
-    with tempfile.TemporaryDirectory(prefix="stellarseal_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="paranipay_") as tmp:
         tmp_path = Path(tmp)
         input_path = tmp_path / "input.json"
         witness_path = tmp_path / "witness.wtns"
@@ -128,7 +128,7 @@ def generate_proof(
 def verify_proof_offchain(proof: dict, public_signals: list[str]) -> bool:
     """Real off-chain verification via `snarkjs groth16 verify` — used by
     GET /verify and as a sanity check before ever submitting to chain."""
-    with tempfile.TemporaryDirectory(prefix="stellarseal_verify_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="paranipay_verify_") as tmp:
         tmp_path = Path(tmp)
         proof_path = tmp_path / "proof.json"
         public_path = tmp_path / "public.json"

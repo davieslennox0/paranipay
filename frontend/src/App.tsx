@@ -23,7 +23,7 @@ export default function App() {
         <div className="container">
           <div className="brand">
             <div className="brand-mark" />
-            <span className="brand-name">StellarSeal</span>
+            <span className="brand-name">ParaniPay</span>
           </div>
           <div className="header-right">
             <span className="proto-badge">Protocol 26</span>
@@ -143,7 +143,7 @@ export default function App() {
       <footer className="site-footer">
         <div className="container">
           <span className="muted">
-            StellarSeal · Real Groth16/BN254 proofs · Protocol 26 · MIT License
+            ParaniPay · Real Groth16/BN254 proofs · Protocol 26 · MIT License
           </span>
         </div>
       </footer>

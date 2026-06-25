@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from . import attestation, chain, config, prover
 
-app = FastAPI(title="StellarSeal", version="0.1.0")
+app = FastAPI(title="ParaniPay", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,7 +19,7 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {
-        "name": "StellarSeal",
+        "name": "ParaniPay",
         "oracle_pubkey": attestation.ORACLE_VERIFY_KEY_HEX,
         "required_kyc_level": config.REQUIRED_KYC_LEVEL,
         "contract_id": config.CONTRACT_ID,

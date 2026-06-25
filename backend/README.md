@@ -1,4 +1,4 @@
-# StellarSeal backend
+# ParaniPay backend
 
 FastAPI service: the KYC oracle (`/attest`), the prover (`/prove`,
 `/verify-offchain`), and the Soroban testnet bridge (`/verify/{nullifier}`,
@@ -23,7 +23,7 @@ pip install -r requirements.txt
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port 8420
-# or: pm2 start ../ecosystem.config.js --only stellarseal-backend
+# or: pm2 start ../ecosystem.config.js --only paranipay-backend
 ```
 
 ## Endpoints

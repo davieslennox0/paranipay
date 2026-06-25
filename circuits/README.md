@@ -1,4 +1,4 @@
-# StellarSeal circuits
+# ParaniPay circuits
 
 There are two implementations of the **same** compliance predicate here, on
 purpose — see the root [README](../README.md#why-two-circuits) for the full
