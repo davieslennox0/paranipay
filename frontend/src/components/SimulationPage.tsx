@@ -18,14 +18,14 @@ const MARY_SCRIPT: ScriptStep[] = [
   { id: "proved",    delay: 1100 },
   { id: "sending",   delay: 2000 },
   { id: "verifying", delay: 900  },
-  { id: "cleared",   delay: 2400 },
+  { id: "cleared",   delay: 3200 }, // hold final state before looping
 ];
 
 const LUCAS_SCRIPT: ScriptStep[] = [
   { id: "attesting", delay: 900  },
   { id: "attested",  delay: 2100 },
   { id: "proving_1", delay: 1800 },
-  { id: "failed",    delay: 1700 },
+  { id: "failed",    delay: 3000 }, // hold final state before looping
 ];
 
 const MARY = {
@@ -53,45 +53,49 @@ function numCls(active: boolean, done: boolean) {
   return `sim-step-num${done ? " done" : active ? " active" : ""}`;
 }
 
-export function CharSim({ char, onReplay }: { char: Char; onReplay: () => void }) {
+export function CharSim({ char, onReplay: _onReplay }: { char: Char; onReplay: () => void }) {
   const [stepId, setStepId] = useState<StepId>("idle");
-  const [playing, setPlaying] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Each new generation cancels the previous loop; incremented on unmount / char change
+  const genRef = useRef(0);
 
   const script = char === "mary" ? MARY_SCRIPT : LUCAS_SCRIPT;
   const data   = char === "mary" ? MARY : LUCAS;
   const info   = char === "mary"
     ? { name: "Maria", age: 29, place: "Philippines", tier: 3 }
-    : { name: "Lucas", age: 34, place: "United States",  tier: 1 };
+    : { name: "Lucas", age: 34, place: "United States", tier: 1 };
 
-  const startPlay = useCallback(() => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setPlaying(true);
-  }, []);
-
-  useEffect(() => {
-    if (!playing) return;
+  const runSequence = useCallback(() => {
+    const gen = ++genRef.current;
     setStepId("idle");
-    let cancelled = false;
 
     const advance = (i: number) => {
-      if (i >= script.length || cancelled) { if (!cancelled) setPlaying(false); return; }
+      if (gen !== genRef.current) return;
+      if (i >= script.length) {
+        // End of script: pause already baked into last step's delay, then loop
+        setTimeout(() => {
+          if (gen !== genRef.current) return;
+          runSequence();
+        }, 600); // brief gap between loops
+        return;
+      }
       const { id, delay } = script[i];
-      timerRef.current = setTimeout(() => {
-        if (cancelled) return;
+      setTimeout(() => {
+        if (gen !== genRef.current) return;
         setStepId(id);
-        if (i + 1 < script.length) advance(i + 1); else setPlaying(false);
+        advance(i + 1);
       }, delay);
     };
 
     advance(0);
-    return () => { cancelled = true; if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [playing, script]);
+  }, [script]);
 
   useEffect(() => {
-    const t = setTimeout(startPlay, 600);
-    return () => clearTimeout(t);
-  }, [startPlay]);
+    const t = setTimeout(runSequence, 700);
+    return () => {
+      genRef.current++; // cancel any in-flight loop
+      clearTimeout(t);
+    };
+  }, [runSequence]);
 
   const s1done   = (["attested","proving_1","proving_2","proving_3","proved","sending","verifying","cleared","failed"] as StepId[]).includes(stepId);
   const s1active = stepId === "attesting";
@@ -104,7 +108,6 @@ export function CharSim({ char, onReplay }: { char: Char; onReplay: () => void }
   const showProveData = s2done;
   const showSend = char === "mary" && (s2done || s3active || s3done);
   const failed   = stepId === "failed";
-  const done     = stepId === "cleared" || stepId === "failed";
 
   function proveLbl() {
     if (stepId === "proving_1") return <><span className="spinner" /> Building circuit witness…</>;
@@ -246,12 +249,6 @@ export function CharSim({ char, onReplay }: { char: Char; onReplay: () => void }
             </div>
           )}
         </div>
-      )}
-
-      {done && !playing && (
-        <button onClick={onReplay} style={{ marginTop: 12, width: "100%" }}>
-          ↺ Replay
-        </button>
       )}
     </div>
   );
